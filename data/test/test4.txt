@@ -1,3 +1,0 @@
-# Co-linear data
-./data/maze/poly188.dat
-./data/maze/poly11.dat

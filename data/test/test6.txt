@@ -1,4 +1,0 @@
-# Current Issue
-#./data/maze/poly69.dat
-#./data/maze/poly447.dat
-./data/maze/poly23.dat

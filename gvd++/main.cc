@@ -13,13 +13,15 @@ int main(int argc, char** argv)
 {
   // always run from the /gvd-fortune/ folder
   // all paths must be relative to the gvd-fortune/ folder
-  if (argc < 2)
+  if (argc < 3)
   {
-    std::cout << "Usage: <program> <input file containing a list of file paths>\n";
+    std::cout << "Usage: <program> <input file containing a list of object paths> <sweep line y value>\n";
     return 0;
   }
 
   std::string i(argv[1]);
+  // TODO this should be input on a loop while the program is running and data is parsed
+  double sweepline = std::stod(std::string(argv[2])); 
   // Read in the dataset files
   try
   {
@@ -29,12 +31,14 @@ int main(int argc, char** argv)
     auto queue = createDataQueue(polygons);
     std::string msg;
     std::string err;
-    fortune(queue, -0.8858, msg, err);
+    auto rslt = fortune(queue, sweepline, msg, err);
     std::cout << "Msg: " << msg << std::endl;
     std::cout << "Error: " << err << std::endl;
     auto end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsedSeconds = end-start;
     std::cout << "Process Duration: " << elapsedSeconds.count() << "s\n";
+
+    // TODO write result to disk
 
     // testing only
     // std::cout << "printing test files\n";

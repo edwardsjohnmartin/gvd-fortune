@@ -215,8 +215,9 @@ public:
       p1 = p2;
     }
     auto start = orderedPointSites[0].point;
-    // terminate the wrap around
-    rslt.push_back(makeSegment(start, p1, label, false));
+    // terminate the wrap around - no need to wrap for single segment sites
+    if (orderedPointSites.size() > 3)
+      rslt.push_back(makeSegment(start, p1, label, false));
 
     return rslt;
   }

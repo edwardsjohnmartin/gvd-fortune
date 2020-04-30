@@ -215,7 +215,7 @@ SubTreeRslt generateSubTree(EventPacket const& e,
   }
   else if (e.children.size() == 1)
   {
-    if (optChild && optChild->aType == ArcType_e::ARC_V) {
+    if (optChild && optChild->aType == ArcType_e::ARC_V && math::equiv2(e.site.point, optChild->b)) {
       // if (!optChild.isV) throw 'Invalid insert operation';
       auto childArcNode = math::createArcNode(e.children[0]);
       tree = splitArcNode(optChild, arcNode, nodesToClose, rCQueue);

@@ -1,19 +1,19 @@
 CXX=g++
 # compile in debug
 # CPPFLAGS=-g
-# -g -compile with debug symbols
+# -g -compile with debug symbols TODO remove for release build
 RM=rm -f
 
 # run- "make all" to compile gvd and gvd_test
 
 all: target tests
 
-target: gvd
+target: gvd++
 
 tests: gvd_test
 
-gvd:  types.o math.o nodeInsert.o utils.o dataset.o fortune.o main.o
-	g++ -g -o gvd types.o math.o nodeInsert.o utils.o dataset.o fortune.o main.o
+gvd++:  types.o math.o nodeInsert.o utils.o dataset.o fortune.o main.o
+	g++ -g -o gvd++ types.o math.o nodeInsert.o utils.o dataset.o fortune.o main.o
 
 gvd_test:  types.o math.o nodeInsert.o utils.o dataset.o fortune.o test.o
 	g++ -g -o gvd_test types.o math.o nodeInsert.o utils.o dataset.o fortune.o test.o

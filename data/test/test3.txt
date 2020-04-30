@@ -1,3 +1,0 @@
-# parallel test
-./data/maze/poly366.dat
-./data/maze/poly266.dat

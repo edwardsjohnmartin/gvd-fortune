@@ -39,7 +39,7 @@ namespace
 
   bool validDiff(decimal_t diff)
   {
-    return diff > 2e-2;
+    return diff > 1e-2;
   }
 
   decimal_t getRadius(vec2 point, std::shared_ptr<Node> const& pl, std::shared_ptr<Node> const& pNode,
@@ -83,9 +83,24 @@ namespace
     auto i0 = getIntercept(pl, pNode, newY);
     auto i1 = getIntercept(pNode, pr, newY);
     if (!i0 || !i1) return 1e10;
-    auto diffX = std::abs(i0->x - i1->x);
-    auto diffY = std::abs(i0->y - i1->y);
-    return diffX + diffY;
+    // auto diffX = std::abs(i0->x - i1->x);
+    // auto diffY = std::abs(i0->y - i1->y);
+    // return diffX + diffY;
+
+    // left right test
+    if (pNode->aType == ArcType_e::ARC_V)
+    {
+      if (!math::isRightOfLine(pNode->a, pNode->b, *i0) && math::isRightOfLine(pNode->a, pNode->b, *i1))
+        return 1e10;
+    }
+
+    auto diff0X = std::abs(i0->x - p.x);
+    auto diff0Y = std::abs(i0->y - p.y);
+    auto d1 = diff0X + diff0Y;
+    auto diff1X = std::abs(i1->x - p.x);
+    auto diff1Y = std::abs(i1->y - p.y);
+    auto d2 = diff1X + diff1Y;
+    return d1 > d2 ? d1 : d2;
   }
 
   std::shared_ptr<vec2> chooseClosePoint(std::shared_ptr<Node> const& pl, std::shared_ptr<Node> const& pNode,

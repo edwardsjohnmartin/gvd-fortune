@@ -107,7 +107,7 @@ namespace
 
 namespace math
 {
-  std::map<std::string, Bisector> g_bisectorsMemo;
+  // std::map<std::string, Bisector> g_bisectorsMemo;
 
   decimal_t getEventY(Event const& e)
   {
@@ -723,11 +723,11 @@ namespace math
    Bisector bisect(Event const& e1, Event const& e2)
   {
     auto abId = std::to_string(e1.id) + std::to_string(e2.id);
-    auto found = g_bisectorsMemo.find(abId);
-    if (found != g_bisectorsMemo.end())
-    {
-      return (*found).second;
-    }
+    // auto found = g_bisectorsMemo.find(abId); // PERFORMANCE (opt)
+    // if (found != g_bisectorsMemo.end())
+    // {
+    //   return (*found).second;
+    // }
     Bisector b{false, nullptr, vec2(0.0, 0.0),
               vec2(0.0, 0.0), vec2(0.0, 0.0)};
     if (e1.type == EventType_e::POINT && e2.type == EventType_e::POINT)
@@ -746,7 +746,7 @@ namespace math
     {
       throw std::runtime_error("Invalid bisectors");
     }
-    g_bisectorsMemo.emplace(abId, b);
+    // g_bisectorsMemo.emplace(abId, b);
     return b;
   }
 

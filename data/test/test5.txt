@@ -1,4 +1,0 @@
-# Overlapping site
-./data/maze/poly301.dat
-./data/maze/poly320.dat
-./data/maze/poly323.dat
