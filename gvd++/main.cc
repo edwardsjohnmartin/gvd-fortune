@@ -14,6 +14,8 @@
 // ./gvd++ /home/dmarsden/dev2/gvd-fortune/data/random_100/files.txt 0.917
 // ./gvd++ /home/dmarsden/dev2/gvd-fortune/data/testing/files.txt 0.917
 
+// ./gvd++ /home/dmarsden/dev2/gvd-fortune/data/random_100/files.txt 0.945
+
 /* TASK list
  - edges not complete
  - nodes not closing

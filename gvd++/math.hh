@@ -293,7 +293,7 @@ namespace math
     auto d = dot(v1, v2);
     auto m1 = std::sqrt(v1.x * v1.x + v1.y * v1.y);
     auto m2 = std::sqrt(v2.x * v2.x + v2.y * v2.y);
-    return std::acos(d/m1*m2);
+    return std::acos(d/(m1*m2));
   }
 
   inline std::shared_ptr<vec2> connected(Event const& s1, Event const& s2)

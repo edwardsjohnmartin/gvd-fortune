@@ -568,7 +568,7 @@ std::shared_ptr<CloseEvent> createCloseEvent(std::shared_ptr<Node> const& arcNod
 
   if (arcNode->aType == ArcType_e::ARC_PARA
       && left->aType == ArcType_e::ARC_PARA
-      && left->aType == ArcType_e::ARC_PARA)
+      && right->aType == ArcType_e::ARC_PARA)
   {
     // All three are points
     auto equi = math::equidistant(el, ec, er);
@@ -696,6 +696,10 @@ std::vector<CloseEvent> remove(std::shared_ptr<Node> const& arcNode, vec2 point,
   auto side = (parent->pLeft && parent->pLeft->id == arcNode->id) ? Side_e::LEFT : Side_e::RIGHT;
   auto parentSide = (grandparent->pLeft->id == parent->id) ? Side_e::LEFT : Side_e::RIGHT;
 
+  auto newEdge = nextEdge;
+  if (side == Side_e::LEFT)
+    newEdge = prevEdge;
+
   auto siblingSide = side == Side_e::LEFT ? Side_e::RIGHT : Side_e::LEFT;
   auto sibling = math::getChild(parent, siblingSide);
   math::setChild(grandparent, sibling, parentSide);
@@ -707,14 +711,13 @@ std::vector<CloseEvent> remove(std::shared_ptr<Node> const& arcNode, vec2 point,
   // Add new close events for new sibling arcs.
   removeCloseEventFromQueue(arcNode->id, rCQueue);
   std::vector<CloseEvent> closeEvents;
-  auto prevArc = grandparent->prevArc();
+  auto prevArc = newEdge->prevArc();
   removeCloseEventFromQueue(prevArc->id, rCQueue);
-
   auto e = createCloseEvent(prevArc, directrix);
   if (e)
     closeEvents.push_back(*e);
 
-  auto nextArc = grandparent->nextArc();
+  auto nextArc = newEdge->nextArc();
   removeCloseEventFromQueue(nextArc->id, rCQueue);
   e = createCloseEvent(nextArc, directrix);
   if (e)
