@@ -242,8 +242,8 @@ Parabola.prototype.setDrawPoints = function () {
 GeneralParabola = function (focus, h, k, p, theta, splitSite = false) {
   this.parabola = new Parabola(focus, h, k, p);
   this.theta = theta;
-  this.Rz = rotateZ(degrees(-this.theta));
-  this.nRz = rotateZ(degrees(this.theta));
+  this.Rz = rotateZ(-this.theta);
+  this.nRz = rotateZ(this.theta);
   this.splitSite = splitSite;
 }
 

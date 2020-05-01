@@ -31,4 +31,6 @@ std::shared_ptr<vec2> intersection(std::shared_ptr<Node> edge, double directrix)
 
 ComputeResult fortune(std::vector<Event> queue, double const& sweepline, std::string& rMsg, std::string& rErr);
 
+void printTree();
+
 #endif

@@ -457,8 +457,7 @@ function rotateY(theta) {
 		 0.0, 0.0,  0.0, 1.0 );
   return ry;
 }
-function rotateZ(theta) {
-  var rad = radians(theta);
+function rotateZ(radians) {
   // var c = Math.cos( rad );
   // var c;
   // if (Math.abs(theta) === 90) {
@@ -467,8 +466,8 @@ function rotateZ(theta) {
   //   c = Math.cos( rad );
   // }
 
-  var c = Math.cos( rad );
-  var s = Math.sin( rad );
+  var c = Math.cos( radians );
+  var s = Math.sin( radians );
   var rz = mat4( c, -s, 0.0, 0.0,
 		 s,  c, 0.0, 0.0,
 		 0.0,  0.0, 1.0, 0.0,

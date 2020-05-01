@@ -45,6 +45,13 @@ let g_datasetList = [
   {label:"RPG 4096", filePath: "./data/rpg_4096/files.txt"},
   {label:"RPG 8192", filePath: "./data/rpg_8192/files.txt"},
   {label:"RPG 16384", filePath: "./data/rpg_16384/files.txt"},
+  {label:"GVD++ Results", cppRslts: true,
+    pPath: "./data/gvd++/output_polygons.txt",
+    ePath: "./data/gvd++/output_edges.txt",
+    bPath: "./data/gvd++/output_beachline.txt",
+    cPath: "./data/gvd++/output_close.txt",
+    sPath: "./data/gvd++/output_sweepline.txt"
+  },
   // {label:"RPG 32768", filePath: "./data/rpg_32768/files.txt"},
   {label:"Data Testing", filePath: "./data/test/files.txt"}
  ];
@@ -189,57 +196,64 @@ function init() {
     datasetChange(g_setIdx);
 }
 
-function datasetChange_C_addon(idx) {
-  g_datasetList[idx].c_init = true;
-  localStorage.setIdx = idx;
-  var query = '/gvd_cpp/?value=' + g_datasetList[idx].filePath + "&sweepline=" + g_sweepline.y.toFixed(10);
-  $.get(query).then(function (json) {
-    if (json.err && json.err.length > 0) {
-      console.error("Server error: " + json.err);
-      return;
-    }
+// function datasetChange_C_addon(idx) {
+//   g_datasetList[idx].c_init = true;
+//   localStorage.setIdx = idx;
+//   var query = '/gvd_cpp/?value=' + g_datasetList[idx].filePath + "&sweepline=" + g_sweepline.y.toFixed(10);
+//   $.get(query).then(function (json) {
+//     if (json.err && json.err.length > 0) {
+//       console.error("Server error: " + json.err);
+//       return;
+//     }
 
-    if (json.msg && json.msg.length > 0) {
-      console.log("Server message: " + json.msg);
-    }
+//     if (json.msg && json.msg.length > 0) {
+//       console.log("Server message: " + json.msg);
+//     }
 
-    var sites = JSON.parse(json.sites);
-    var edges = JSON.parse(json.edges);
-    var beachline = JSON.parse(json.beachline);
-    var closeEvents = JSON.parse(json.closeEvents);
+//     var sites = JSON.parse(json.sites);
+//     var edges = JSON.parse(json.edges);
+//     var beachline = JSON.parse(json.beachline);
+//     var closeEvents = JSON.parse(json.closeEvents);
 
-    renderData(sites, edges, beachline, closeEvents);
-  });
-}
+//     renderData(sites, edges, beachline, closeEvents);
+//   });
+// }
 
-function sweeplineUpdate_C_addon(idx) {
-  if (!g_datasetList[idx].c_init){
-    datasetChange_C_addon(idx);
-    return;
-  }
+// function sweeplineUpdate_C_addon(idx) {
+//   if (!g_datasetList[idx].c_init){
+//     datasetChange_C_addon(idx);
+//     return;
+//   }
 
-  localStorage.setIdx = idx;
-  drawSweepline(g_sweepline);
-  var query = '/gvd_cpp_inc/?value=' + g_datasetList[idx].filePath + "&sweepline=" + g_sweepline.y.toFixed(10);
-  $.get(query).then(function (json) {
-    if (json.err && json.err.length > 0) {
-      console.error("Server error: " + json.err);
-      return;
-    }
+//   localStorage.setIdx = idx;
+//   drawSweepline(g_sweepline);
+//   var query = '/gvd_cpp_inc/?value=' + g_datasetList[idx].filePath + "&sweepline=" + g_sweepline.y.toFixed(10);
+//   $.get(query).then(function (json) {
+//     if (json.err && json.err.length > 0) {
+//       console.error("Server error: " + json.err);
+//       return;
+//     }
 
-    if (json.msg && json.msg.length > 0) {
-      console.log("Server message: " + json.msg);
-    }
-    var edges = JSON.parse(json.edges);
-    var beachline = JSON.parse(json.beachline);
-    var closeEvents = JSON.parse(json.closeEvents);
-    renderData([], edges, beachline, closeEvents);
-    enforceSettings();
-  });
-}
+//     if (json.msg && json.msg.length > 0) {
+//       console.log("Server message: " + json.msg);
+//     }
+//     var edges = JSON.parse(json.edges);
+//     var beachline = JSON.parse(json.beachline);
+//     var closeEvents = JSON.parse(json.closeEvents);
+//     renderData([], edges, beachline, closeEvents);
+//     enforceSettings();
+//   });
+// }
 
 function datasetChange(idx) {
   g_setIdx = idx;
+
+  if (g_datasetList[g_setIdx].cppRslts) {
+    localStorage.setIdx = g_setIdx;
+    renderData();
+    return;
+  }
+
   if (!g_datasetList[g_setIdx].data) {
     processNewDataset();
   } else {

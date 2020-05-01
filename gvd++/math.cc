@@ -4,7 +4,8 @@
 
 namespace
 {
-  const double g_xInc = 0.01;
+  // PERFORMANCE - lower for optimality
+  const double g_xInc = 0.0001;
 
   bool intersectsTarget(V const& line, V const& t)
   {
@@ -88,9 +89,8 @@ namespace
     }
   };
 
-  std::vector<vec4> rotateZ(decimal_t theta)
+  std::vector<vec4> rotateZ(decimal_t radians)
   {
-    auto radians = theta * (std::atan(1)*4) / 180.0;
     // double c = 0.0;
     // if ( std::abs(theta) == 90)
     //   c = 0.0;
@@ -828,6 +828,10 @@ namespace math
       if (equiv2(points[1].point, segments[0].a) || equiv2(points[1].point, segments[0].b))
       {
         return intersect(bisect(segments[0], points[1]), bisect(points[0], points[1]));
+      }
+      if (equiv2(points[0].point, segments[0].a) || equiv2(points[0].point, segments[0].b))
+      {
+        return intersect(bisect(segments[0], points[0]), bisect(points[0], points[1]));
       }
       return intersect(bisect(segments[0], points[0]), bisect(points[0], points[1]));
     }

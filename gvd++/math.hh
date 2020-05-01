@@ -95,9 +95,9 @@ namespace math
     return degrees * pi() / 180.0;
   }
 
-  inline int radians (double radians)
+  inline double degrees(double radians)
   {
-    return radians * 180 / pi();
+    return radians * 180.0 / pi();
   }
 
   inline decimal_t parabola_f(decimal_t x, decimal_t h, decimal_t k, decimal_t p)

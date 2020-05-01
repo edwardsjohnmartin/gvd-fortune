@@ -14,6 +14,9 @@ namespace
   static std::vector<std::pair<vec2, vec2>> g_edges;
   static std::vector<std::vector<vec2>> g_curvedEdges;
 
+  bool g_writeParabolas = true;
+  bool g_writeVs = true;
+
   EventPacket getEventPacket(Event const& e, std::vector<Event>& rQueue)
   {
     auto n = rQueue.back(); // right
@@ -39,7 +42,7 @@ namespace
 
   bool validDiff(decimal_t diff)
   {
-    return diff > 1e-2;
+    return diff < 1e-2;
   }
 
   decimal_t getRadius(vec2 point, std::shared_ptr<Node> const& pl, std::shared_ptr<Node> const& pNode,
@@ -298,6 +301,7 @@ void writeResults(ComputeResult const& r, std::string const& ePath)
 {
   // write edges
   std::ofstream outE(ePath.c_str(), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
+  outE << std::setprecision(std::numeric_limits<decimal_t>::digits10 + 1);
   for (auto&& e: r.edges)
   {
     outE << "e\n"; // signal for new edge
@@ -324,21 +328,29 @@ void writeResults(ComputeResult const& r, std::string const& ePath, std::string 
 
   // write beachline items
   std::ofstream outB(bPath.c_str(), std::ofstream::out | std::ofstream::trunc | std::ofstream::binary);
-  for (auto&& e: r.b_edges)
+  outB << std::setprecision(std::numeric_limits<decimal_t>::digits10 + 1);
+
+  if (g_writeVs)
   {
-    outB << "b\n"; // signal for new edge
-    for (auto&& ePt : e)
+    for (auto&& e: r.b_edges)
     {
-      outB << ePt.x << " " << ePt.y << std::endl;
+      outB << "b\n"; // signal for new edge
+      for (auto&& ePt : e)
+      {
+        outB << ePt.x << " " << ePt.y << std::endl;
+      }
     }
   }
 
-  for (auto&& ce: r.b_curvedEdges)
+  if (g_writeParabolas)
   {
-    outB << "bc\n"; // signal for new edge
-    for (auto&& ePt : ce)
+    for (auto&& ce: r.b_curvedEdges)
     {
-      outB << ePt.x << " " << ePt.y << std::endl;
+      outB << "bc\n"; // signal for new edge
+      for (auto&& ePt : ce)
+      {
+        outB << ePt.x << " " << ePt.y << std::endl;
+      }
     }
   }
 
@@ -782,9 +794,6 @@ ComputeResult fortune(std::vector<Event> queue, double const& sweepline, std::st
     rMsg += ": Count:" + count;
     ComputeResult rslt{{}, g_edges, g_curvedEdges, {}, {}, closeEvents};
 
-    if (!root)
-      rMsg += ": Root node null";
-
     // DEBUG ONLY
     setBeachline(root, rslt, sweepline);
     rMsg += ": V Count:" + std::to_string(rslt.b_edges.size())
@@ -798,3 +807,87 @@ ComputeResult fortune(std::vector<Event> queue, double const& sweepline, std::st
 
   return ComputeResult();
 }
+
+// PRINTING
+const std::string placeholder("_");
+
+int getHeight(std::shared_ptr<Node> const& pNode)
+{
+  if (!pNode) return 0;
+  return 1 + std::max(getHeight(pNode->pRight), getHeight(pNode->pLeft));
+}
+
+void getLine(std::shared_ptr<Node> const& pNode, int depth, std::vector<std::string>& vals, bool rightBranch, int& offset)
+{
+  if (depth <= 0 && pNode != nullptr) {
+    std::string label = std::to_string(pNode->id);
+    if (pNode->aType == ArcType_e::ARC_PARA)
+      label += "P";
+    else if (pNode->aType == ArcType_e::ARC_V)
+      label += "V";
+    else if (pNode->aType == ArcType_e::EDGE)
+      label += "E";
+    vals.push_back(label);
+    return;
+  }
+
+  if (pNode->pLeft != nullptr)
+  {
+    // if (offset != 0) offset = std::min(0, offset - 4);
+    getLine(pNode->pLeft, depth-1, vals, false, offset);
+  }
+  else if (depth-1 <= 0)
+    vals.push_back(placeholder);
+
+  if (pNode->pRight != nullptr)
+  {
+    if (rightBranch) offset += 4;
+    getLine(pNode->pRight, depth-1, vals, true, offset);
+  }
+  else if (depth-1 <= 0)
+    vals.push_back(placeholder);
+}
+
+void printRow(std::shared_ptr<Node> const& p, const int height, int depth)
+{
+  std::vector<std::string> vec;
+  int offset = 0;
+  getLine(p, depth, vec, false, offset);
+  std::cout << std::setw((height - depth)*2 + offset); // scale setw with depth
+  bool toggle = true; // start with eft
+  if (vec.size() > 1)
+  {
+    for (auto&& v : vec)
+    {
+      if (v != placeholder)
+      {
+        if (toggle)
+          std::cout << "/" << "   ";
+        else
+          std::cout << "\\" << "   ";
+      }
+      toggle = !toggle;
+    }
+    std::cout << std::endl;
+    std::cout << std::setw((height - depth)*2 + offset);
+  }
+  for (auto&& v : vec) {
+    if (v != placeholder)
+      std::cout << v << "   ";
+  }
+  std::cout << std::endl;
+}
+
+void printTree()
+{
+  std::cout << "Tree:\n";
+  if (!root) return;
+  int h = getHeight(root);
+  std::cout << "Height:" << h << std::endl;
+  int height = h * 2;
+  for (int i = 0; i < height; i++)
+  {
+    printRow(root, height, i);
+  }
+}
+

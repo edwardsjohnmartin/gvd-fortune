@@ -9,6 +9,17 @@
 #include "types.hh"
 #include "utils.hh"
 
+// usage:
+// ./gvd++ /home/dmarsden/dev2/gvd-fortune/data/testing/files.txt 0.917
+// ./gvd++ /home/dmarsden/dev2/gvd-fortune/data/random_100/files.txt 0.917
+// ./gvd++ /home/dmarsden/dev2/gvd-fortune/data/testing/files.txt 0.917
+
+/* TASK list
+ - edges not complete
+ - nodes not closing
+*/
+
+
 int main(int argc, char** argv)
 {
   // always run from the /gvd-fortune/ folder
@@ -19,14 +30,16 @@ int main(int argc, char** argv)
     return 0;
   }
 
-  std::string i(argv[1]);
-  // TODO this should be input on a loop while the program is running and data is parsed
-  double sweepline = std::stod(std::string(argv[2])); 
+  std::string inputFile(argv[1]);
+  // perhaps this should be input on a loop while the program is running and data is parsed
+  double sweepline = std::stod(std::string(argv[2]));
   // Read in the dataset files
   try
   {
+    // testing only
+    std::cout << "input file:" << inputFile << std::endl;
     // only wrap for testing
-    auto polygons = processInputFiles(i);
+    auto polygons = processInputFiles(inputFile);
     auto start = std::chrono::system_clock::now();
     auto queue = createDataQueue(polygons);
     std::string msg;
@@ -38,7 +51,20 @@ int main(int argc, char** argv)
     std::chrono::duration<double> elapsedSeconds = end-start;
     std::cout << "Process Duration: " << elapsedSeconds.count() << "s\n";
 
-    // TODO write result to disk
+    printTree();
+
+    // write result to disk
+    std::string pPath("../data/gvd++/output_polygons.txt");
+    std::string ePath("../data/gvd++/output_edges.txt");
+    std::string bPath("../data/gvd++/output_beachline.txt");
+    std::string cPath("../data/gvd++/output_close.txt");
+
+    rslt.polygons = polygons;
+    writeResults(rslt, pPath, ePath, bPath, cPath);
+
+    std::string sPath("../data/gvd++/output_sweepline.txt");
+    std::fstream sl(sPath.c_str(), sl.binary | sl.out | sl.trunc);
+    sl << sweepline;
 
     // testing only
     // std::cout << "printing test files\n";

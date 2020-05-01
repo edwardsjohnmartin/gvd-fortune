@@ -162,25 +162,37 @@ std::vector<Polygon> processInputFiles(std::string const& inputFiles)
   // each file is a single polygon, line, or point
   std::vector<Polygon> polygons;
   std::string filePath;
+
   while(fin >> filePath)
   {
     // std::cout << "File path:" << filePath << std::endl;
     if (filePath.empty()) continue;
+    filePath = std::string(".") + filePath;
     // trim?
     // each file of format
     // xxxxx yyyyyyy - p1
     // xxxxx yyyyyyy...
     // xxxxx yyyyyyy - p1
-    std::ifstream file(filePath.c_str());
+
+    // testing only
+    // std::cout << "opening file: " << filePath << std::endl;
+
+    std::fstream file(filePath.c_str(), file.binary | file.in);
+
+    if (!file.is_open()) throw std::runtime_error("Failed to open input file:" + filePath);
+
     std::string line;
     std::vector<std::string> lines;
     while (std::getline(file, line))
     {
       lines.push_back(line);
     }
+
+    if (lines.empty()) throw std::runtime_error("Invalid input file:" + filePath);
+
     Polygon poly;
 
-    if (lines.size() == 2)
+    if (lines.size() < 3)
     {
       poly.addPoint(parseLineToVec2(lines[0]));
     }
@@ -217,6 +229,10 @@ std::vector<Polygon> processInputFiles(std::string const& inputFiles)
 
     polygons.push_back(poly);
   }
+
+  // testing only
+  std::cout << "parsed: " << polygons.size() << " polygons\n";
+
   return polygons;
 }
 
