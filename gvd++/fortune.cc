@@ -110,7 +110,7 @@ namespace
                   std::shared_ptr<Node> const& pr, std::vector<vec2> points, double directrix)
   {
     if (points.size() == 1) return std::make_shared<vec2>(points[0]);
-    auto leastDiff = 10000;
+    decimal_t leastDiff = 10000.0;
     size_t curIdx;
     // length test - the length of node's arc should be close to 0
     // for the correct point
@@ -559,6 +559,14 @@ std::shared_ptr<CloseEvent> createCloseEvent(std::shared_ptr<Node> const& arcNod
   auto right = arcNode->nextArc();
   if (!left || !right) return nullptr;
 
+  // testing only
+  // auto a = left->id;
+  // auto b = arcNode->id;
+  // auto c = right->id;
+  // if (b == 3)
+  // if (a == 62 && b == 3 && c == 20)
+  //   std::cout << "DEBUG\n";
+
   vec2 closePoint(0.0, 0.0);
   auto el = math::createEventFromNode(left);
   auto ec = math::createEventFromNode(arcNode);
@@ -704,8 +712,10 @@ std::vector<CloseEvent> remove(std::shared_ptr<Node> const& arcNode, vec2 point,
   auto sibling = math::getChild(parent, siblingSide);
   math::setChild(grandparent, sibling, parentSide);
   // the grand parent inherits the children and a new start
-  grandparent->edgeStart = point;
+  // grandparent->edgeStart = point;
   sibling->pParent = grandparent;
+
+  newEdge->edgeStart = point;
 
   // Cancel the close event for this arc and adjoining arcs.
   // Add new close events for new sibling arcs.

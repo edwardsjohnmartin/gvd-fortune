@@ -5,7 +5,7 @@
 namespace
 {
   // PERFORMANCE - lower for optimality
-  const double g_xInc = 0.0001;
+  const double g_xInc = 0.001;
 
   bool intersectsTarget(V const& line, V const& t)
   {
@@ -252,11 +252,11 @@ namespace math
     if (genP.theta == 0) return p;
     vec4 newP(p.x, p.y, 0.0, 0.0);
     newP.x += -genP.h;
-    p.y += -2 * genP.k;
+    newP.y += -2 * genP.k;
     auto rslt = mult(genP.nRz, newP);
     rslt.x += genP.focus.x;
     rslt.y += genP.focus.y;
-    return vec2(rslt.x, rslt.y); // Do we need z,w?
+    return vec2(rslt.x, rslt.y);
   }
 
   std::vector<decimal_t> lpIntersect(decimal_t h, decimal_t k, decimal_t p, vec2 const& q, vec2 const& v)
@@ -347,10 +347,10 @@ namespace math
     return ret;
   }
 
-  std::vector<vec2> intersectRay(GeneralParabola const& genP, vec2 origin, vec2 v)
+  std::vector<vec2> intersectRay(GeneralParabola const& genP, vec2 origin, vec2 inputV)
   {
     auto p = transformPoint(origin, genP);
-    auto vec = transformVector(v, genP);
+    auto vec = transformVector(inputV, genP);
 
     auto tvals = lpIntersect(genP.h, genP.k, genP.p, p, vec);
     // Sort tvals in increasing order
@@ -369,8 +369,8 @@ namespace math
         vec2 pt(p.x, y);
         pt = untransformPoint(pt, genP);
         ret.push_back(pt);
-      } else if (std::abs(t < 1e10)) {
-        auto q = vec2(p.x + (v.x * t), p.y + (v.y * t));
+      } else if (std::abs(t) < 1e10) {
+        auto q = vec2(p.x + (vec.x * t), p.y + (vec.y * t));
         // var q = add(p, mult(v, t));
         q = untransformPoint(q, genP);
         ret.push_back(q);
@@ -833,7 +833,9 @@ namespace math
       {
         return intersect(bisect(segments[0], points[0]), bisect(points[0], points[1]));
       }
-      return intersect(bisect(segments[0], points[0]), bisect(points[0], points[1]));
+      auto b1 = bisect(segments[0], points[0]);
+      auto b2 = bisect(points[0], points[1]);
+      return intersect(b1, b2);
     }
     else if (segments.size() == 3)
     {
@@ -953,6 +955,8 @@ std::vector<vec2> prepDraw(GeneralParabola const& p, vec2 const& origin, vec2 co
 
   for (auto x = lx; x < dx; x += g_xInc)
     points.push_back(vec2(x, math::parabola_f(x, p.h, p.k, p.p)));
+
+  points.push_back(vec2(dx, math::parabola_f(dx, p.h, p.k, p.p)));
 
   std::vector<vec2> drawPoints;
   // if (_.isNaN(this.parabola.x0) || _.isNaN(this.parabola.x1)) return;

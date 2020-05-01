@@ -157,10 +157,6 @@ inline CloseEvent newCloseEvent(decimal_t y, std::shared_ptr<Node> const& arcNod
 
 inline void sortedInsert(CloseEvent const& e, std::vector<CloseEvent>& rQueue)
 {
-  if (e.arcNode->id == 644 || e.arcNode->id == 114)
-  {
-    std::cout << "testing\n";
-  }
   // PERFORMANCE - see if we can speed this up
   rQueue.push_back(e);
   std::sort(rQueue.begin(), rQueue.end(), close_event_less_than());
@@ -169,10 +165,6 @@ inline void sortedInsert(CloseEvent const& e, std::vector<CloseEvent>& rQueue)
 // TODO performance
 inline void removeCloseEventFromQueue(uint32_t id, std::vector<CloseEvent>& q)
 {
-  if (id == 644 || id == 114)
-  {
-    std::cout << "testing\n";
-  }
   auto itr = std::find_if(q.begin(), q.end(), [&id](CloseEvent const& e){
     return e.arcNode && e.arcNode->id == id;
   });

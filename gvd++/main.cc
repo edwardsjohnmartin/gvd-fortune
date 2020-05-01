@@ -42,18 +42,19 @@ int main(int argc, char** argv)
     std::cout << "input file:" << inputFile << std::endl;
     // only wrap for testing
     auto polygons = processInputFiles(inputFile);
-    auto start = std::chrono::system_clock::now();
     auto queue = createDataQueue(polygons);
     std::string msg;
     std::string err;
+    auto start = std::chrono::system_clock::now();
     auto rslt = fortune(queue, sweepline, msg, err);
+    auto end = std::chrono::system_clock::now();
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(end-start);
+    std::cout << "Process Duration: " << ms.count() << "(ms)\n";
+
     std::cout << "Msg: " << msg << std::endl;
     std::cout << "Error: " << err << std::endl;
-    auto end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsedSeconds = end-start;
-    std::cout << "Process Duration: " << elapsedSeconds.count() << "s\n";
 
-    printTree();
+    // printTree();
 
     // write result to disk
     std::string pPath("../data/gvd++/output_polygons.txt");
