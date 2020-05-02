@@ -4,6 +4,9 @@
 
 namespace
 {
+  const decimal_t MAX_LEFT_X = -1000.0;
+  const decimal_t MAX_RIGHT_X = 1000.0;
+
   // PERFORMANCE - lower for optimality
   const double g_xInc = 0.001;
 
@@ -425,14 +428,14 @@ namespace math
 
   std::vector<vec2> vvIntersect(V const& v1, V const& v2)
   {
-    auto s1 = makeSegment(v1.b, v1.a, 0, true);
-    auto s2 = makeSegment(v2.b, v2.a, 0, true);
+    auto s1 = makeSegment(v1.b, v1.a, 0, false);
+    auto s2 = makeSegment(v2.b, v2.a, 0, false);
 
     auto optConnection = connected(s1, s2);
     if (optConnection) {
-      auto a_b = vec2(v1.a.x - v1.b.x, v1.a.y - v1.b.x);
-      auto b_b0 = vec2(v2.b.x - v1.b.x, v2.b.x - v1.b.x);
-      auto b_a1 = vec2(v2.a.x - v1.b.x, v2.a.y - v1.b.x);
+      auto a_b = vec2(v1.a.x - v1.b.x, v1.a.y - v1.b.y);
+      auto b_b0 = vec2(v2.b.x - v1.b.x, v2.b.y - v1.b.y);
+      auto b_a1 = vec2(v2.a.x - v1.b.x, v2.a.y - v1.b.y);
 
       // z area between this and obj
       auto zArea = crossProduct(a_b, b_b0) + crossProduct(a_b, b_a1);
@@ -919,19 +922,19 @@ GeneralParabola::GeneralParabola(vec2 focus, decimal_t h, decimal_t k,
 
 std::vector<vec2> prepDraw(V const& v,  decimal_t const& x0, decimal_t const& x1)
 {
-  if (x1 < -1.1 || x0 > 1.1) return {};
-  auto lx = x0 < -1.1 ? -1.1 : x0;
-  auto dx = x1 > 1.1 ? 1.1 : x1;
+  // if (x1 < MAX_LEFT_X || x0 > MAX_RIGHT_X) return {};
+  auto lx = x0 < MAX_LEFT_X ? MAX_LEFT_X : x0;
+  auto dx = x1 > MAX_RIGHT_X ? MAX_RIGHT_X : x1;
   if (x0 > v.point.x || v.point.x > x1) return {vec2(x0, f_x(v, x0)), vec2(x1, f_x(v, x1))};
   return {vec2(x0, f_x(v, x0)), v.point, vec2(x1, f_x(v, x1))};
 }
 
 std::vector<vec2> prepDraw(Parabola const& p,  decimal_t const& x0, decimal_t const& x1)
 {
-  if (x1 < -1.1 || x0 > 1.1) return {};
+  // if (x1 < MAX_LEFT_X || x0 > MAX_RIGHT_X) return {};
   std::vector<vec2> points;
-  auto lx = x0 < -1.1 ? -1.1 : x0;
-  auto dx = x1 > 1.1 ? 1.1 : x1;
+  auto lx = x0 < MAX_LEFT_X ? MAX_LEFT_X : x0;
+  auto dx = x1 > MAX_RIGHT_X ? MAX_RIGHT_X : x1;
   for (auto x = lx; x < dx; x += g_xInc)
     points.push_back(vec2(x, math::parabola_f(x, p.h, p.k, p.p)));
   return points;
@@ -950,8 +953,8 @@ std::vector<vec2> prepDraw(GeneralParabola const& p, vec2 const& origin, vec2 co
   // this.setDrawPoints();
   std::vector<vec2> points;
 
-  auto lx = x0 < -1.0 ? 1.0 : x0;
-  auto dx = x1 > 1.0 ? 1.0 : x1;
+  auto lx = x0 < MAX_LEFT_X ? MAX_LEFT_X : x0;
+  auto dx = x1 > MAX_RIGHT_X ? MAX_RIGHT_X : x1;
 
   for (auto x = lx; x < dx; x += g_xInc)
     points.push_back(vec2(x, math::parabola_f(x, p.h, p.k, p.p)));
@@ -959,7 +962,6 @@ std::vector<vec2> prepDraw(GeneralParabola const& p, vec2 const& origin, vec2 co
   points.push_back(vec2(dx, math::parabola_f(dx, p.h, p.k, p.p)));
 
   std::vector<vec2> drawPoints;
-  // if (_.isNaN(this.parabola.x0) || _.isNaN(this.parabola.x1)) return;
   for (auto&& pt : points)
   {
     auto newPt = math::untransformPoint(pt, p);

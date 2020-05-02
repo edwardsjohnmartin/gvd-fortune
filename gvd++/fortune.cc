@@ -213,6 +213,11 @@ namespace
   void setBeachline(std::shared_ptr<Node> const& pNode, ComputeResult& rslt, double const& sweepline)
   {
     if (!pNode) return;
+
+    // testing only
+    if (pNode->id == 49)
+      std::cout << "Set B debug\n";
+      
     if (pNode->visited) return;
     if (pNode->aType == ArcType_e::EDGE)
     {

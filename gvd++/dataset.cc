@@ -79,7 +79,7 @@ namespace
 
   decimal_t getOffsetValue(std::vector<vec2> const& dataPoints, std::vector<size_t> const& match)
   {
-    auto xDiff = std::abs(dataPoints[match[0]].x - dataPoints[match[0]].x);
+    auto xDiff = std::abs(dataPoints[match[0]].x - dataPoints[match[1]].x);
     auto value = xDiff * 0.007;
     if (value == 0.0) {return 1e-6;}
     return value;
@@ -149,7 +149,7 @@ std::vector<vec2> sanitizeData(std::vector<vec2>& orderedPoints, std::shared_ptr
   auto match = getMatch(orderedPoints);
   while(match.size() > 0)
   {
-    orderedPoints[match[0]].y -= getOffsetValue(orderedPoints, match);
+    orderedPoints[match[1]].y -= getOffsetValue(orderedPoints, match);
     match = getMatch(orderedPoints);
   }
   return orderedPoints;

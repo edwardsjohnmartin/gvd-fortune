@@ -54,7 +54,7 @@ int main(int argc, char** argv)
     std::cout << "Msg: " << msg << std::endl;
     std::cout << "Error: " << err << std::endl;
 
-    // printTree();
+    printTree();
 
     // write result to disk
     std::string pPath("../data/gvd++/output_polygons.txt");
