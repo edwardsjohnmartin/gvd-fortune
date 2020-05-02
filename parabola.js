@@ -82,17 +82,18 @@ Parabola.prototype.intersectRay = function (p, v) {
 
 // y = f(x)
 Parabola.prototype.f = function (x) {
-  var a = (x - this.h);
-  var a2 = a * a;
-  var b = (4 * this.p);
-  if (b === 0) {
-    // WATCH VALUE
-    return 1e10;
-  }
-  var c = a2/b;
-  var d = c + this.k;
-  return d;
-  // return (x - this.h) * (x - this.h) / (4 * this.p) + this.k;
+  // var a = (x - this.h);
+  // var a2 = a * a;
+  // var b = (4 * this.p);
+  // if (b === 0) {
+  //   // WATCH VALUE
+  //   return 1e10;
+  // }
+  // var c = a2/b;
+  // var d = c + this.k;
+  // return d;
+
+  return parabola_f(x, this.h, this.k, this.p);
 }
 
 // Inverse of f. x = f_(y)
@@ -345,7 +346,7 @@ GeneralParabola.prototype.intersectRay = function (pOrigin, vOrigin) {
       pt = vec3(p[0], y, 0);
       pt = pthis.untransformPoint(pt);
       ret.push(pt);
-    } else if (Math.abs(t < 1e10)) {
+    } else if (Math.abs(t) < 1e10) {
       var q = vec3(p[0] + (v[0] * t), p[1] + (v[1] * t), 0);
       // var q = add(p, mult(v, t));
       q = pthis.untransformPoint(q);
