@@ -265,7 +265,7 @@ namespace math
 
   std::vector<vec2> vpIntersect(V const& v, Parabola& p);
   std::vector<vec2> vvIntersect(V const& v1, V const& v2);
-  std::vector<vec2> vbIntersect(V const& v, Bisector const& line);
+  // std::vector<vec2> vbIntersect(V const& v, Bisector const& line);
 
   inline bool betweenValue(decimal_t t, decimal_t a, decimal_t b)
   {

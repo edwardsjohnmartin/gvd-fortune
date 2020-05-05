@@ -217,7 +217,7 @@ namespace
     // testing only
     if (pNode->id == 49)
       std::cout << "Set B debug\n";
-      
+
     if (pNode->visited) return;
     if (pNode->aType == ArcType_e::EDGE)
     {
@@ -447,21 +447,22 @@ std::shared_ptr<vec2> intersectParabolicToStraightArc(std::shared_ptr<Node> l, s
     auto left = math::createParabola(l->point, directrix, l->id);
     auto right = math::createV(r->a, r->b, directrix, r->id);
     ints = math::vpIntersect(right, left);
-    if (ints.empty())
-    {
-      // use a back-up line since the parabola is probably
-      // so narrow that it won't intersect with any ray below p
-      if (math::equiv2(l->point, r->a) || (math::equiv2(l->point, r->b) && left.p < 1e-5))
-      {
-        auto backupLine = math::createLine(vec2(-1, left.focus.y), vec2(1, left.focus.y));
-        ints = math::vbIntersect(right, backupLine);
-      }
-      if (ints.empty())
-      {
-        std::cout << "0 intersections between p - v\n";
-        return nullptr;
-      }
-    }
+    if (ints.empty()) return {};
+    // if (ints.empty())
+    // {
+    //   // use a back-up line since the parabola is probably
+    //   // so narrow that it won't intersect with any ray below p
+    //   if (math::equiv2(l->point, r->a) || (math::equiv2(l->point, r->b) && left.p < 1e-5))
+    //   {
+    //     auto backupLine = math::createLine(vec2(-1, left.focus.y), vec2(1, left.focus.y));
+    //     ints = math::vbIntersect(right, backupLine);
+    //   }
+    //   if (ints.empty())
+    //   {
+    //     std::cout << "0 intersections between p - v\n";
+    //     return nullptr;
+    //   }
+    // }
     if (ints.size() == 1) return std::make_shared<vec2>(ints[0]);
     if (ints.size() > 2)
     {
@@ -490,21 +491,22 @@ std::shared_ptr<vec2> intersectParabolicToStraightArc(std::shared_ptr<Node> l, s
   auto left = math::createV(l->a, l->b, directrix, l->id);
   auto right = math::createParabola(r->point, directrix, r->id);
   ints = math::vpIntersect(left, right);
-  if (ints.empty())
-  {
-    // use a back-up line since the parabola is probably
-    // so narrow that it won't intersect with any ray below p
-    if (math::equiv2(r->point, l->a) || (math::equiv2(r->point, l->b) && right.p < 1e-5))
-    {
-      auto backupLine = math::createLine(vec2(-1, right.focus.y), vec2(1, right.focus.y));
-      ints = math::vbIntersect(left, backupLine);
-    }
-    if (ints.empty())
-    {
-      std::cout << "0 intersections between p - v\n";
-      return nullptr;
-    }
-  }
+  if (ints.empty()) return {};
+  // if (ints.empty())
+  // {
+  //   // use a back-up line since the parabola is probably
+  //   // so narrow that it won't intersect with any ray below p
+  //   if (math::equiv2(r->point, l->a) || (math::equiv2(r->point, l->b) && right.p < 1e-5))
+  //   {
+  //     auto backupLine = math::createLine(vec2(-1, right.focus.y), vec2(1, right.focus.y));
+  //     ints = math::vbIntersect(left, backupLine);
+  //   }
+  //   if (ints.empty())
+  //   {
+  //     std::cout << "0 intersections between p - v\n";
+  //     return nullptr;
+  //   }
+  // }
   if (ints.size() == 1) return std::make_shared<vec2>(ints[0]);
   if (ints.size() > 2)
   {

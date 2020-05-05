@@ -467,28 +467,27 @@ namespace math
         if (i.y >= v1.point.y)
           vPts.push_back(i);
       }
-      if (vPts.empty()) return {};
       return vPts;
     }
   }
 
-  std::vector<vec2> vbIntersect(V const& v, Bisector const& line)
-  {
-    std::vector<vec2> ret;
-    auto origin = v.point;
-    for (auto vec : v.vectors)
-    {
-      auto r = math::intersectLines(origin, vec, line.p1, line.p2);
-      if (r)
-        ret.push_back(*r);
-    }
-    return ret;
-  }
+  // std::vector<vec2> vbIntersect(V const& v, Bisector const& line)
+  // {
+  //   std::vector<vec2> ret;
+  //   auto origin = v.point;
+  //   for (auto vec : v.vectors)
+  //   {
+  //     auto r = math::intersectLines(origin, vec, line.p1, line.p2);
+  //     if (r)
+  //       ret.push_back(*r);
+  //   }
+  //   return ret;
+  // }
 
   double getAngle(Event s, bool consider_order)
   {
-    auto p1 = s.b; // lower point
-    auto p2 = s.a; // upper point
+    auto p1 = s.b;
+    auto p2 = s.a;
     if (p1.y == p2.y) return 0;
     if (consider_order && p1.y > p2.y) {
       return std::atan2(p1.y-p2.y, p1.x-p2.x);
@@ -867,6 +866,7 @@ V::V(vec2 p1, vec2 p2, decimal_t directrix, uint32_t id)
   auto optP = math::intersectLines(a, b, directrixSeg.a, directrixSeg.b);
   if (!optP) throw std::runtime_error("Invalid V");
   point = *optP;
+  // Event s1(EventType_e::SEG, 0, vec2(0.0,0.0), b, a); // TEST opposite b before a
   Event s1(EventType_e::SEG, 0, vec2(0.0,0.0), a, b);
   auto theta = math::getSegmentsBisectorAngle(directrixSeg, s1);
 
