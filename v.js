@@ -12,7 +12,7 @@
 //               sweepline
 //------------------------------------------------------------
 var tolerance = 0.00001;
-// line is given as a pair of points through which the line passes.
+// line is given as a pair of points through which the line passes. y0 = b, y1 = a
 // The sweepline is assumed to be horizontal and is given as a y-value.
 V = function(line, directrix, id) {
   lineSegment = _.sortBy(line, [function(i) { return i[1]; }]);
@@ -133,16 +133,17 @@ V.prototype.intersect = function(obj) {
     ret = _.sortBy(ret, function (val) { return val[0]; });
     return ret;
   } else if (obj instanceof Line) {
-    ret = [];
-    var p = this.p;
-    this.vectors.forEach(function(v) {
-      ret.push(intersectLines(p, v, obj.p1, obj.p2));
-    });
-    if (!ret[0] || _.isNaN(ret[0][0]))
-      console.error("V - Para result Invalid between arc:" + this.id + " and arc:" + obj.id);
-    // sort by xvalues if x0 < x1 [x0, x1]
-    ret = _.sortBy(ret, [function(i) { return i[0]; }]);
-    return ret;
+    throw "Invalid Intersection";
+    // ret = [];
+    // var p = this.p;
+    // this.vectors.forEach(function(v) {
+    //   ret.push(intersectLines(p, v, obj.p1, obj.p2));
+    // });
+    // if (!ret[0] || _.isNaN(ret[0][0]))
+    //   console.error("V - Para result Invalid between arc:" + this.id + " and arc:" + obj.id);
+    // // sort by xvalues if x0 < x1 [x0, x1]
+    // ret = _.sortBy(ret, [function(i) { return i[0]; }]);
+    // return ret;
   } else if (obj instanceof V) {
     var s1 = makeSegment(this.y0, this.y1);
     var s2 = makeSegment(obj.y0, obj.y1)
@@ -277,14 +278,14 @@ V.prototype.prepDraw = function(nodeid, label, x0, x1) {
   }
 }
 
-function divide(point, scalar){
-  var tmp = point;
-  tmp.x /= scalar;
-  tmp.y /= scalar;
-  tmp.z /= scalar;
-  return tmp;
-}
+// function divide(point, scalar){
+//   var tmp = point;
+//   tmp.x /= scalar;
+//   tmp.y /= scalar;
+//   tmp.z /= scalar;
+//   return tmp;
+// }
 
-function inRange(v, lower, upper) {
-  return lower <= v && v <= upper;
-}
+// function inRange(v, lower, upper) {
+//   return lower <= v && v <= upper;
+// }

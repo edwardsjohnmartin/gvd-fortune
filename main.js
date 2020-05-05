@@ -275,6 +275,7 @@ function datasetChange(idx) {
 }
 
 function fortune(reorder) {
+  var t0 = performance.now();
   nodeId = 1;
   var queue = createDataQueue(reorder);
   dcel = new DCEL();
@@ -285,6 +286,7 @@ function fortune(reorder) {
 
   g_addTime = 0;
   g_vertexProcessing = 0;
+  var count = 0;
   while (queue.length > 0 && nextY > g_sweepline.y) {
     var event = queue.pop();
     if (event.isCloseEvent) {
@@ -315,6 +317,7 @@ function fortune(reorder) {
         });
       }
     } else {
+      count++;
       // Site event
       var packet = getEventPacket(event, queue);
       var newEvents = beachline.add(packet);
@@ -337,6 +340,9 @@ function fortune(reorder) {
   // console.log("Time in loop:" + loopTime.toFixed(6) + "(ms)");
   console.log("Time adding:" + g_addTime.toFixed(6) + "(ms)");
   console.log("Time closing:" + g_vertexProcessing.toFixed(6) + "(ms)");
+  var t1 = performance.now();
+  var processTime = t1 - t0;
+  console.log("Process Time:" + processTime.toFixed(6) + "(ms) for:" + count + " sites");
 
   // debugging only
   // var ev = '';
@@ -376,11 +382,7 @@ function moveSweepline(y) {
 function render(reorder = false) {
   clearSurface();
   g_debugObjs = [];
-  var t0 = performance.now();
   var beachline = fortune(reorder);
-  var t1 = performance.now();
-  var processTime = t1 - t0;
-  console.log("Process Time:" + processTime.toFixed(6) + "(ms)");
 
   var t2 = performance.now();
   drawBeachline(beachline, g_sweepline.y);

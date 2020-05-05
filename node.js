@@ -389,20 +389,22 @@ function intersectParabolicToStraightArc(left, right, directrix){
     return _.isUndefined(i);
   });
 
-  if (intersections.length == 0 || !intersections[0]) {
-    // use a back-up line since the parabola is probably
-    // so narrow that it won't intersect with any ray below p
-    var para = left.isParabola ? pleft : pright;
-    var V = left.isParabola ? pright : pleft;
-    if (belongsToSegment(left, right) && para.p < 1e-5) {
-      var backupLine = new Line(vec3(-1, para.focus[1], 0), vec3(1, para.focus[1], 0));
-      intersections = V.intersect(backupLine);
-    }
-    if (intersections.length == 0 || !intersections[0]) {
-      console.log("number of intersections is 0 between node id: " + left.id + " and node: " + right.id);
-      return null;
-    }
-  }
+  if (intersections.length == 0 || !intersections[0]) return [];
+
+  // if (intersections.length == 0 || !intersections[0]) {
+  //   // use a back-up line since the parabola is probably
+  //   // so narrow that it won't intersect with any ray below p
+  //   var para = left.isParabola ? pleft : pright;
+  //   var V = left.isParabola ? pright : pleft;
+  //   if (belongsToSegment(left, right) && para.p < 1e-5) {
+  //     var backupLine = new Line(vec3(-1, para.focus[1], 0), vec3(1, para.focus[1], 0));
+  //     intersections = V.intersect(backupLine);
+  //   }
+  //   if (intersections.length == 0 || !intersections[0]) {
+  //     console.log("number of intersections is 0 between node id: " + left.id + " and node: " + right.id);
+  //     return null;
+  //   }
+  // }
 
   if (intersections.length == 1) {
     return {

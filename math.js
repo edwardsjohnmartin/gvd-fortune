@@ -468,8 +468,8 @@ function dividesPoints(v, origin, p1, p2) {
 // s is an array of length 2
 //------------------------------------------------------------
 function getAngle(s, consider_order=true) {
-  var p1 = s[0]; // lower point
-  var p2 = s[1]; // upper point
+  var p1 = s[0];
+  var p2 = s[1];
   if (p1[1] == p2[1]) return 0;
   if (consider_order && p1[1] > p2[1]) {
     // swap

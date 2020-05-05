@@ -582,12 +582,6 @@ function drawDebugObjs(objs) {
     return o instanceof Line;
   });
 
-  // TODO REMOVE
-  if (lines.length > 1) {
-    lines[0].p2 = negate(lines[0].p2);
-    lines[1].p2 = intersectLines(lines[0].p1, lines[0].p2, lines[1].p1, lines[1].p2);
-  }
-
   let selB = d3.select("#gvd")
   .selectAll(".debug-line")
   .data(lines);
