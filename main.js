@@ -45,6 +45,7 @@ let g_datasetList = [
   {label:"RPG 4096", filePath: "./data/rpg_4096/files.txt"},
   {label:"RPG 8192", filePath: "./data/rpg_8192/files.txt"},
   {label:"RPG 16384", filePath: "./data/rpg_16384/files.txt"},
+  {label:"Tmp Files",  sanitize: true, filePath: "./data/tmp_files.txt"},
   {label:"GVD++ Results", cppRslts: true,
     pPath: "./data/gvd++/output_polygons.txt",
     ePath: "./data/gvd++/output_edges.txt",
