@@ -15,7 +15,8 @@ namespace
       auto p2 = rPts[i].point;
       if (math::equiv2(p1, p2))
       {
-        rPts[i].point.y -= 0.0001;
+        // std::cout << "applying offset" << std::endl;
+        rPts[i].point.y -= 0.00001;
       }
     }
   }
