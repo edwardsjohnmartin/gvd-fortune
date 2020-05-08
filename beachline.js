@@ -119,13 +119,6 @@ Beachline.prototype.add = function (eventPacket) {
 Beachline.prototype.remove = function (arcNode, point, directrix, endingEdges, radius) {
   if (!arcNode.isArc) throw "Unexpected edge in remove";
 
-  // debugging only
-  // if (arcNode.id === g_debugIdMiddle) {
-  //   g_addDebug = true;
-  // } else {
-  //   g_addDebug = false;
-  // }
-
   var parent = arcNode.parent;
   var grandparent = parent.parent;
   var side = (parent.left == arcNode) ? LEFT_CHILD : RIGHT_CHILD;
@@ -154,17 +147,21 @@ Beachline.prototype.remove = function (arcNode, point, directrix, endingEdges, r
   if (prevArc.closeEvent) {
     prevArc.closeEvent.live = false;
   }
-  var e = createCloseEvent(prevArc, directrix);
-  if (e != null) {
-    closeEvents.push(e);
+  var e1 = createCloseEvent(prevArc, directrix);
+  if (e1 != null) {
+    _.each(e1, e => {
+      closeEvents.push(e);
+    });
   }
   var nextArc = newEdge.nextArc();
   if (nextArc.closeEvent) {
     nextArc.closeEvent.live = false;
   }
-  var e = createCloseEvent(nextArc, directrix);
-  if (e != null) {
-    closeEvents.push(e);
+  var e2 = createCloseEvent(nextArc, directrix);
+  if (e2 != null) {
+    _.each(e2, e => {
+      closeEvents.push(e);
+    });
   }
   var cEnd = performance.now();
   g_vertexProcessing += cEnd - cStart;

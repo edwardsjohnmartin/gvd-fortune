@@ -62,12 +62,14 @@ function dividesRightOfLine(a1, b1, a2, b2) {
 }
 
 function isRightOfLine(upper, lower, p) {
+  if (fastFloorEqual(p, upper) || fastFloorEqual(p, lower)) return false;
   // var v1 = subtract(upper, lower);
   // var v2 = subtract(p, lower);
   var v1 = vec3(upper[0] - lower[0], upper[1] - lower[1], 0);
   var v2 = vec3(p[0] - lower[0], p[1] - lower[1], 0);
   var z = cross(v1, v2)[2];
   // if (z === 0.0) console.log("Co-linear found when using isRightOfLine()");
+
   return z < 0;
 }
 

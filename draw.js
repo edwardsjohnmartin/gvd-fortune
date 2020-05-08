@@ -705,7 +705,7 @@ function drawDebugObjs(objs) {
 function drawSites(points) {
   d3.select("#gvd").selectAll(".point-site").remove();
 
-  d3.select("#gvd")
+  var c = d3.select("#gvd")
     .selectAll(".point-site")
     .data(points)
     .enter()
@@ -718,9 +718,10 @@ function drawSites(points) {
     .attr("fill", (d,i) => siteColorSvg(d.label))
     .attr("id", d => `site${d.id}`)
     .attr("href", "#gvd")
-    .append("title").html(d => d.id + " p(" + d[0] + ", " + d[1] + ")" + " file:" + d.fileId)
-    // .append("title").html(d => d.id + " r: " + d.relation + " p(" + d[0] + ", " + d[1] + ")" + " file:" + d.fileId)
-  ;
+    ;
+
+    c.on("mouseover", d => {console.log(d)});
+    c.append("title").html(d => d.id + " p(" + d[0] + ", " + d[1] + ")" + " file:" + d.fileId);
 }
 
 function drawSegments(segments) {

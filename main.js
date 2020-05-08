@@ -45,6 +45,7 @@ let g_datasetList = [
   {label:"RPG 4096", filePath: "./data/rpg_4096/files.txt"},
   {label:"RPG 8192", filePath: "./data/rpg_8192/files.txt"},
   {label:"RPG 16384", filePath: "./data/rpg_16384/files.txt"},
+  {label:"Tmp Files",  sanitize: true, filePath: "./data/tmp_files.txt"},
   // {label:"RPG 32768", filePath: "./data/rpg_32768/files.txt"},
   {label:"Data Testing", filePath: "./data/test/files.txt"}
  ];
@@ -108,12 +109,6 @@ function updateSweepline() {
   var elem = document.getElementById("sweeplineInput");
   moveSweepline(parseFloat(elem.value));
 }
-
-// template to call the server
-// function callServer() {
-//   var query = '/holes';
-//   $.get(query)
-// }
 
 function keydown(event) {
   var x = event.keyCode;
@@ -267,16 +262,20 @@ function fortune(reorder) {
   var beachline = new Beachline(dcel);
   closeEventPoints = [];
   if (queue.length < 1) return beachline;
-  var nextY = getEventY(queue[queue.length - 1]);
+  // var curY = getEventY(queue[queue.length - 1]);
+  var curY = 100;
 
   g_addTime = 0;
   g_vertexProcessing = 0;
-  while (queue.length > 0 && nextY > g_sweepline.y) {
+  while (queue.length > 0) {
     var event = queue.pop();
-    if (event.isCloseEvent) {
-      if (event.live && event.arcNode.closeEvent.live) {
+    var eventY = getEventY(event);
+    if (eventY < g_sweepline.y) break;
 
-        // only set if not overridden // TODO Performance
+    if (event.isCloseEvent) {
+      if (event.id === `${g_debugIdLeft}-${g_debugIdMiddle}-${g_debugIdRight}`)
+        console.log("debug point");
+      if (event.yval < curY && event.live && event.arcNode.closeEvent.live) {
         var prevEdge = event.arcNode.prevEdge();
         var nextEdge = event.arcNode.nextEdge();
 
@@ -288,35 +287,34 @@ function fortune(reorder) {
           endingEdges.push(nextEdge.dcelEdge);
         }
 
-        var curY = getEventY(event);
-        var newEvents = beachline.remove(event.arcNode, event.point, curY, endingEdges, event.r);
+        // var curY = getEventY(event);
+        var newEvents = beachline.remove(event.arcNode, event.point, eventY, endingEdges, event.r);
         newEvents.forEach(function (ev) {
-            var newY = getEventY(ev);
-            if (newY < curY - g_eventThresh || Math.abs(newY - curY) < g_eventThresh) {
+            // var newY = getEventY(ev);
+            // if (newY < eventY - g_eventThresh || Math.abs(newY - eventY) < g_eventThresh) {
             sortedInsertion(queue, ev);
             if (ev.isCloseEvent) {
               closeEventPoints.push(ev);
             }
-          }
         });
+        curY = eventY;
       }
     } else {
       // Site event
       var packet = getEventPacket(event, queue);
       var newEvents = beachline.add(packet);
-      var curY = getEventY(event);
+      // var curY = getEventY(event);
       newEvents.forEach(function (ev) {
-        var newY = getEventY(ev);
-        if (newY < curY - g_eventThresh || Math.abs(newY - curY) < g_eventThresh) {
-          sortedInsertion(queue, ev);
-          if (ev.isCloseEvent) {
-            closeEventPoints.push(ev);
-          }
+        // var newY = getEventY(ev);
+        // if (newY < eventY - g_eventThresh || Math.abs(newY - eventY) < g_eventThresh) {
+        sortedInsertion(queue, ev);
+        if (ev.isCloseEvent) {
+          closeEventPoints.push(ev);
         }
       });
+      curY = eventY;
     }
-    if (queue.length > 0)
-      nextY = getEventY(queue[queue.length - 1]);
+    // if (queue.length > 0 && event.isCloseEvent && event.yval < curY)
   }
 
   // Processing metrics

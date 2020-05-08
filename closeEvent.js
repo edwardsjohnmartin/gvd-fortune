@@ -123,12 +123,21 @@ function createCloseEvent(arcNode, directrix) {
     g_addDebug = false;
   }
 
+  if (arcNode.isV) {
+    // left right test
+    var i0 = getIntercept(left, arcNode, directrix);
+    var i1 = getIntercept(arcNode, right, directrix);
+    if (!i0 || !i1) return [];
+    var s = arcNode.site;
+    if (!isRightOfLine(s.a, s.b, i0) && isRightOfLine(s.a, s.b, i1))
+      return [];
+  }
+
   if (arcNode.isParabola && left.isParabola && right.isParabola) {
     // All three are points
     var equi = equidistant(left.site, arcNode.site, right.site);
     if (!equi) {
-      // console.log("Equi point null between 3 point sites");
-      return null;
+      return [];
     }
     closePoint = equi[0];
     if (closePoint == null) return null;
@@ -139,9 +148,9 @@ function createCloseEvent(arcNode, directrix) {
     if (cross(u, v)[2] < 0) {
       let r = length(subtract(arcNode.site, closePoint));
       let event_y = closePoint[1] - r;
-      return new CloseEvent(event_y, arcNode, left, right, closePoint, r);
+      return [new CloseEvent(event_y, arcNode, left, right, closePoint, r)];
     }
-    return null;
+    return [];
   }
 
   // if (arcNode.isV) {
@@ -163,40 +172,47 @@ function createCloseEvent(arcNode, directrix) {
   }
 
   // guilty by association
-  _.forEach([left, arcNode, right], function(node) {
-    points = node.isV ? filterVisiblePoints(node.site, points) : points;
-  });
+  // _.forEach([left, arcNode, right], function(node) {
+  //   points = node.isV ? filterVisiblePoints(node.site, points) : points;
+  // });
 
-  if (points == null || points.length == 0) return null;
+  if (points == null) return [];
 
   // filter by site association
   points = filterBySiteAssociation(left, arcNode, right, points);
 
-  if (points == null || points.length == 0) return null;
-  if (points.length == 1) {
-    closePoint = points[0];
-    var diff = getDiff(left, arcNode, right, closePoint, directrix);
-    if (!validDiff(diff)) return null;
-  } else {
-    var p = chooseClosePoint(left, arcNode, right, points, directrix);
-    if (!p) return null;
-    closePoint = p;
-  }
+  // if (points == null || points.length == 0) return null;
+  // if (points.length == 1) {
+  //   closePoint = points[0];
+  //   var diff = getDiff(left, arcNode, right, closePoint, directrix);
+  //   if (!validDiff(diff)) return null;
+  // } else {
+  //   var p = chooseClosePoint(left, arcNode, right, points, directrix);
+  //   if (!p) return null;
+  //   closePoint = p;
+  // }
 
-  var radius = getRadius(closePoint, left, arcNode, right);
-  if (_.isUndefined(radius)) throw "invalid radius";
 
-  return new CloseEvent(closePoint[1] - radius, arcNode, left, right, closePoint, radius);
+  var ret = [];
+  points.forEach(p => {
+    var radius = getRadius(p, left, arcNode, right);
+    if (_.isUndefined(radius)) throw "invalid radius";
+    if (p)
+      ret.push(new CloseEvent(p[1] - radius, arcNode, left, right, p, radius))
+  });
+  return ret;
+  // return new CloseEvent(closePoint[1] - radius, arcNode, left, right, closePoint, radius);
 }
 
 
 function processCloseEvents(closingNodes, directrix) {
   // Create close events
   var closeEvents = [];
-  _.forEach(closingNodes, function(node) {
-    var e = createCloseEvent(node, directrix);
-    if (e)
+  _.each(closingNodes, function(node) {
+    var events = createCloseEvent(node, directrix);
+    _.each(events, e => {
       closeEvents.push(e);
+    });
   });
   return closeEvents;
 }

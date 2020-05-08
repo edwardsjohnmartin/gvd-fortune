@@ -427,37 +427,33 @@ function isColinear(p1, p2, p3, optTolerance) {
   // p11.createSegment(0, 1);
 
   var p12 = new Polygon();
-  p12.addPoint(vec3(0.137, 0.094, 0));
-  p12.addPoint(vec3(0.23, -0.152, 0));
-  p12.addPoint(vec3(-0.137, -0.394, 0));
+  // p12.addPoint(vec3(0.137, 0.54, 0));
+  p12.addPoint(vec3(0.23, 0.42, 0));
+  p12.addPoint(vec3(-0.137, 0.394, 0));
   p12.createSegment(0, 1);
-  p12.createSegment(1, 2);
+  // p12.createSegment(1, 2);
 
   var p13 = new Polygon();
   p13.addPoint(vec3(-0.12, -0.21, 0));
   p13.addPoint(vec3(0.12, -0.21, 0));
 
   var p14 = new Polygon();
-  p14.addPoint(vec3(-0.12, 0.81, 0));
+  p14.addPoint(vec3(-0.0009513900165127875, 0.36450191668080745, 0));
 
   var p15 = new Polygon();
-  p15.addPoint(vec3(-0.62, -0.4, 0));
-  p15.addPoint(vec3(-0.42, -0.14, 0));
-  p15.addPoint(vec3(-0.82, -0.31, 0));
+  p15.addPoint(vec3(-0.00601157860749113, 0.3320736318842792, 0));
 
-  p15.createSegment(1,2);
-  p15.createSegment(0,2);
   // p15.createSegment(2,0);
 
-  polygons.push(p11);
+  // polygons.push(p11);
   polygons.push(p12);
   // polygons.push(p13);
-  // polygons.push(p14);
+  polygons.push(p14);
   polygons.push(p15);
 
   // Math.seedrandom('3');
   // var numRandom2 = 100;	  // var numRandom2 = 100;
-  // var polygons = [];	  // var polygons5 = [];
+  // // var polygons = [];	  // var polygons5 = [];
   // for (var i = 0; i < numRandom2; ++i) {	  // for (var i = 0; i < numRandom2; ++i) {
   //   var p = new Polygon();	  //   var p = new Polygon();
   // 	p.addPoint(vec3(Math.random()*2-1, Math.random()*2-1, 0));	  // 	p.addPoint(vec3(Math.random()*2-1, Math.random()*2-1, 0));
