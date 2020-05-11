@@ -109,7 +109,7 @@ function chooseClosePoint(left, node, right, points, directrix) {
 //------------------------------------------------------------
 // createCloseEvent
 //------------------------------------------------------------
-function createCloseEvent(arcNode, directrix) {
+function createCloseEvent(arcNode, directrix, optDivideInfo) {
   if (arcNode == null) return null;
   var left = arcNode.prevArc();
   var right = arcNode.nextArc();
@@ -144,15 +144,7 @@ function createCloseEvent(arcNode, directrix) {
     return null;
   }
 
-  // if (arcNode.isV) {
-  //   if (arcNode.site.a == left.site && arcNode.site.b == right.site
-  //     || arcNode.site.b == left.site && arcNode.site.a == right.site) return null;
-  //   // If siblings reference the same closing node don't let them close until
-  //   // the closing node is processed
-  //   if (shareVClosing(arcNode, left) || shareVClosing(arcNode, right)) return null;
-  // }
-
-  // can compute up to 6 equi points
+  // can compute multiple equi points
   var points = equidistant(left.site, arcNode.site, right.site);
 
   // debugging only
@@ -161,6 +153,21 @@ function createCloseEvent(arcNode, directrix) {
       g_debugObjs.push(p);
     });
   }
+
+  if (optDivideInfo) {
+    points = _.filter(points, p => {
+      if (p[0] === optDivideInfo.point[0]) {
+        // throw "invalid equi point";
+        return false;
+      }
+      if(optDivideInfo.keepRight)
+        return p[0] > optDivideInfo.point[0];
+      else
+        return p[0] < optDivideInfo.point[0];
+    });
+  }
+
+  if (points == null || points.length == 0) return null;
 
   // guilty by association
   _.forEach([left, arcNode, right], function(node) {
@@ -190,11 +197,11 @@ function createCloseEvent(arcNode, directrix) {
 }
 
 
-function processCloseEvents(closingNodes, directrix) {
+function processCloseEvents(closingData, directrix) {
   // Create close events
   var closeEvents = [];
-  _.forEach(closingNodes, function(node) {
-    var e = createCloseEvent(node, directrix);
+  _.forEach(closingData, function(data) {
+    var e = createCloseEvent(data.node, directrix, data.divideInfo);
     if (e)
       closeEvents.push(e);
   });

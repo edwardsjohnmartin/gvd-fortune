@@ -108,8 +108,8 @@ function splitArcNode(toSplit, node, dcel, nodesToClose) {
   }
   var left = toSplit;
   var right = new ArcNode(toSplit.site);
-  nodesToClose.push(left);
-  nodesToClose.push(right);
+  nodesToClose.push({node:left, keepRight:false, point:vertex});
+  nodesToClose.push({node:right, keepRight:true, point:vertex});
   return new EdgeNode(
       left, new EdgeNode(node, right, vertex, dcel), vertex, dcel);
 }
@@ -123,8 +123,8 @@ function insertEdge(toSplit, edge, vertex, dcel, optNodesToClose) {
   var right = new ArcNode(toSplit.site);
 
   if (optNodesToClose) {
-    optNodesToClose.push(left);
-    optNodesToClose.push(right);
+    optNodesToClose.push({node:left, keepRight:false, point:vertex});
+    optNodesToClose.push({node:right, keepRight:true, point:vertex});
   }
   return new EdgeNode(
       left, new EdgeNode(edge, right, vertex, dcel), vertex, dcel);
@@ -163,12 +163,15 @@ function ParaInsert(child, arcNode, dcel, nodesToClose) {
       edgeToUpdate.dcelEdge.dest.overridden = true;
       edgeToUpdate.dcelEdge.dest.point = arcNode.site;
     }
-    nodesToClose.push(child);
     if (closingData.closeRight) {
-      nodesToClose.push(child.nextArc());
+      nodesToClose.push({node:child, keepRight:false, point:arcNode.site});
+      // nodesToClose.push(child.nextArc());
+      nodesToClose.push({node:child.nextArc(), keepRight:true, point:arcNode.site});
       newChild = closePointSplit(child, arcNode, dcel);
     } else {
-      nodesToClose.push(child.prevArc());
+      nodesToClose.push({node:child, keepRight:true, point:arcNode.site});
+      // nodesToClose.push(child.prevArc());
+      nodesToClose.push({node:child.prevArc(), keepRight:false, point:arcNode.site});
       newChild = closePointSplit(arcNode, child, dcel);
     }
   } else {

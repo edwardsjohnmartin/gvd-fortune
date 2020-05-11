@@ -154,7 +154,7 @@ Beachline.prototype.remove = function (arcNode, point, directrix, endingEdges, r
   if (prevArc.closeEvent) {
     prevArc.closeEvent.live = false;
   }
-  var e = createCloseEvent(prevArc, directrix);
+  var e = createCloseEvent(prevArc, directrix, {keepRight:false, point:point});
   if (e != null) {
     closeEvents.push(e);
   }
@@ -162,7 +162,7 @@ Beachline.prototype.remove = function (arcNode, point, directrix, endingEdges, r
   if (nextArc.closeEvent) {
     nextArc.closeEvent.live = false;
   }
-  var e = createCloseEvent(nextArc, directrix);
+  var e = createCloseEvent(nextArc, directrix, {keepRight:true, point:point});
   if (e != null) {
     closeEvents.push(e);
   }
